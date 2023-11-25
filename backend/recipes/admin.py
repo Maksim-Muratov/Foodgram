@@ -1,3 +1,17 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Ingredient
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    """Конфиг админ-зоны для модели ингредиента."""
+
+    list_display = (
+        'id',
+        'name',
+        'measurement_unit'
+    )
+    search_fields = ('name',)
+    list_filter = ('measurement_unit',)
+    list_display_links = ('name',)
