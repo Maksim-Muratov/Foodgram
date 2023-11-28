@@ -19,6 +19,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    """Конфиг админ-зоны для модели тега."""
     list_display = (
         'name',
         'color',
