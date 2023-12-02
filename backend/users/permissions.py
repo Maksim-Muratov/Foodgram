@@ -5,6 +5,7 @@ SAFE_METHODS = ('GET', 'POST', 'OPTIONS', 'HEAD')
 
 
 class CustomUserPermission(BasePermission):
+    """Кастомный permission для работы с пользователями."""
 
     def has_permission(self, request, view):
         return True
