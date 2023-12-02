@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
+from .models import Subscribe
+
 
 User = get_user_model()
 
@@ -19,8 +21,20 @@ class UserAdmin(UserAdmin):
         'first_name',
         'last_name',
         'email',
-        'is_staff',
+        'is_staff'
     )
     search_fields = ('username', 'email',)
     list_filter = ('is_staff',)
     list_display_links = ('username', 'email',)
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    """Конфиг админ-зоны для модели подписки."""
+
+    list_display = (
+        'id',
+        'author',
+        'user'
+    )
+    search_fields = ('author', 'user',)
