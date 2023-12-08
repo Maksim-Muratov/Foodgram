@@ -11,6 +11,7 @@ djangorestframework==3.12.4
 djangorestframework-simplejwt==5.3.0
 djoser==2.2.0
 flake8==6.1.0
+flake8-import-order==0.18.2
 idna==3.6
 mccabe==0.7.0
 oauthlib==3.2.2

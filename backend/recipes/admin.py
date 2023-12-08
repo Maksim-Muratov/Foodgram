@@ -63,19 +63,6 @@ class RecipeAdmin(admin.ModelAdmin):
         return f'{obj.favorites.count()}'
 
 
-@admin.register(IngredientInRecipe)
-class IngredientInRecipeAdmin(admin.ModelAdmin):
-    """Конфиг админ-зоны для модели ингредиента в рецепте."""
-
-    list_display = (
-        'id',
-        'ingredient',
-        'recipe',
-        'amount'
-    )
-    search_fields = ('recipe',)
-
-
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     """Конфиг админ-зоны для модели избранного."""

@@ -8,7 +8,6 @@ from django_filters.rest_framework import (
 
 from recipes.models import Recipe, Tag
 
-
 User = get_user_model()
 
 
