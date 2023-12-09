@@ -117,7 +117,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .order_by('ingredient__name')
             .annotate(amount=Sum('amount'))
         )
-        shopping_cart = 'Для выбранных рецептов вам понадобится:'
+        shopping_cart = 'Для выбранных рецептов вам понадобится:\n\n'
         shopping_cart += '\n'.join(
             [
                 f'{ingredient["ingredient__name"]}'
