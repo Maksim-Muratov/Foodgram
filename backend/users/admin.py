@@ -24,7 +24,7 @@ class UserAdmin(UserAdmin):
         'is_staff'
     )
     search_fields = ('username', 'email',)
-    list_filter = ('is_staff',)
+    list_filter = ('is_staff', 'username', 'email',)
     list_display_links = ('username', 'email',)
 
 

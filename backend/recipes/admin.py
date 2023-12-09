@@ -27,7 +27,7 @@ class IngredientAdmin(admin.ModelAdmin):
         'measurement_unit'
     )
     search_fields = ('name',)
-    list_filter = ('measurement_unit',)
+    list_filter = ('name', 'measurement_unit',)
     list_display_links = ('name',)
 
 
@@ -54,7 +54,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'added_to_favorite'
     )
     search_fields = ('name', 'author',)
-    list_filter = ('author', 'tags',)
+    list_filter = ('author', 'name', 'tags',)
     list_display_links = ('name',)
     inlines = (RecipeIngredientInline, )
 
