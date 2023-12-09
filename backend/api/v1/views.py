@@ -117,12 +117,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .order_by('ingredient__name')
             .annotate(amount=Sum('amount'))
         )
-        file_name = f'{user.username}_shopping_cart.txt'
-        shopping_cart = f'{user.first_name} хочет купить:\n\n'
+        shopping_cart = 'Для выбранных рецептов вам понадобится:'
         shopping_cart += '\n'.join(
             [
-                f'{ingredient["ingredient__name"]} — '
-                f'{ingredient["amount"]}'
+                f'{ingredient["ingredient__name"]}'
+                f' — {ingredient["amount"]} '
                 f'{ingredient["ingredient__measurement_unit"]}'
                 for ingredient in ingredients
             ]
@@ -130,6 +129,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response = HttpResponse(
             shopping_cart, content_type='text.txt; charset=utf-8'
         )
+        file_name = f'{user.username}_shopping_list.txt'
         response['Content-Disposition'] = f'attachment; filename={file_name}'
         return response
 

@@ -44,7 +44,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(methods=['post', 'delete'], detail=True)
     def subscribe(self, request, **kwargs):
-        """Подписаться."""
+        """Подписаться/отписаться."""
         user = request.user
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
