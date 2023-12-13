@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
-
 from django_filters.rest_framework import (
     FilterSet,
     ModelMultipleChoiceFilter,
     filters,
 )
 
-from recipes.models import Recipe, Tag
+from recipes.models import Recipe, Tag, Favorite, ShoppingCart
 
 User = get_user_model()
 
@@ -37,14 +36,20 @@ class RecipeFilter(FilterSet):
 
     def filter_is_favorited(self, queryset, name, value):
         """Фильтр по избранному"""
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(favorites__user=user)
+        if self.request.user.is_anonymous:
+            return queryset.none()
+        if value:
+            favorites = Favorite.objects.filter(
+                user=self.request.user).values_list('recipe_id', flat=True)
+            return queryset.filter(id__in=favorites)
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         """Фильтр по корзине покупок"""
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(cart__user=user)
+        if self.request.user.is_anonymous:
+            return queryset.none()
+        if value:
+            shopping_carts = ShoppingCart.objects.filter(
+                user=self.request.user).values_list('recipe_id', flat=True)
+            return queryset.filter(id__in=shopping_carts)
         return queryset

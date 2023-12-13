@@ -1,7 +1,13 @@
 from django.db.models import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
 
 from recipes.models import (
     Favorite,
@@ -11,15 +17,6 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
-
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
-from rest_framework.response import Response
-
 from users.pagination import CustomPageNumberPagination
 
 from .filters import RecipeFilter
@@ -35,7 +32,6 @@ from .serializers import (
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """Вьюсет ингредиентов."""
 
-    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
 
@@ -46,7 +42,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
             return Ingredient.objects.filter(
                 name__icontains=search_value,
             )
-        return super().get_queryset()
+        return Ingredient.objects.all()
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -95,8 +91,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if getattr(instance, '_prefetched_objects_cache', None):
                 instance._prefetched_objects_cache = {}
             return Response(serializer.data)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
     def destroy(self, request, *args, **kwargs):
         """Удаление рецепта."""
@@ -104,8 +99,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if instance.author == request.user:
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
@@ -176,11 +170,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_recipe(self, model, user, pk):
         """Функция удаления из корзины/избранного."""
         recipe = get_object_or_404(Recipe, pk=pk)
-        instance = model.objects.filter(user=user, recipe=recipe)
-        if not instance.exists():
-            return Response(
-                {'errors': 'Рецепт уже удален.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        instance = get_object_or_404(model, user=user, recipe=recipe)
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

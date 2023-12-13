@@ -38,9 +38,10 @@ class Command(BaseCommand):
         ) as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
+                name, measurement_unit = row
                 record = Ingredient(
-                    name=row[0],
-                    measurement_unit=row[1],
+                    name=name,
+                    measurement_unit=measurement_unit,
                 )
                 records.append(record)
 

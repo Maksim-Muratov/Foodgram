@@ -1,13 +1,11 @@
-from api.v1.serializers import CustomUserSerializer, SubscribeSerializer
-
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
-
 from djoser.views import UserViewSet
-
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from api.v1.serializers import CustomUserSerializer, SubscribeSerializer
 
 from .models import Subscribe
 from .pagination import CustomPageNumberPagination
@@ -42,27 +40,32 @@ class CustomUserViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-    @action(methods=['post', 'delete'], detail=True)
+    @action(methods=['post'], detail=True)
     def subscribe(self, request, **kwargs):
-        """Подписаться/отписаться."""
+        """Подписаться."""
         user = request.user
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
-                author,
-                data=request.data,
-                context={'request': request},
-            )
-            serializer.is_valid(raise_exception=True)
-            Subscribe.objects.create(user=user, author=author)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        try:
-            subscription = Subscribe.objects.get(user=user, author=author)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        subscription.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = SubscribeSerializer(
+            author,
+            data=request.data,
+            context={'request': request},
+        )
+        serializer.is_valid(raise_exception=True)
+        Subscribe.objects.create(user=user, author=author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def get_queryset(self):
-        return User.objects.all()
+    @subscribe.mapping.delete
+    def delete_subscribe(self, request, **kwargs):
+        """Отписаться."""
+        user = request.user
+        if user.is_authenticated:
+            author_id = self.kwargs.get('id')
+            author = get_object_or_404(User, id=author_id)
+            try:
+                subscription = Subscribe.objects.get(user=user, author=author)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)

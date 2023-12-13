@@ -3,14 +3,11 @@ import base64
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
-
 from djoser.serializers import UserCreateSerializer, UserSerializer
-
-from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
-
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
 from users.models import Subscribe
 
 
@@ -35,9 +32,8 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, author):
         user = self.context['request'].user
-        if not user.is_authenticated:
-            return False
-        return user.subscriber.filter(author=author).exists()
+        return (user.is_authenticated and
+                user.subscriber.filter(author=author).exists())
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -196,15 +192,13 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         user = self.context['request'].user
-        if not user.is_authenticated:
-            return False
-        return user.favorites.filter(recipe=obj).exists()
+        return (user.is_authenticated and
+                user.favorites.filter(recipe=obj).exists())
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
-        if not user.is_authenticated:
-            return False
-        return user.cart.filter(recipe=obj).exists()
+        return (user.is_authenticated and
+                user.cart.filter(recipe=obj).exists())
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
