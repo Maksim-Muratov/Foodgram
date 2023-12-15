@@ -7,7 +7,14 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from recipes.models import Ingredient, IngredientInRecipe, Recipe, Tag
+from recipes.models import (
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    Tag,
+    Favorite,
+    ShoppingCart
+)
 from users.models import Subscribe
 
 
@@ -319,3 +326,34 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         request = self.context['request']
         context = {'request': request}
         return ReadRecipeSerializer(instance, context=context).data
+
+
+class AbstractSerializer(serializers.ModelSerializer):
+    """Абстрактный сериализатор для корзины и избранного."""
+
+    class Meta:
+        abstract = True
+
+    def validate(self, data):
+        """Валидация повторного добавления."""
+        user = data.get('user')
+        recipe = data.get('recipe')
+        if self.Meta.model.objects.filter(user=user, recipe=recipe).exists():
+            raise ValidationError({'error': 'Рецепт уже добавлен.'})
+        return data
+
+
+class ShoppingCartSerializer(AbstractSerializer):
+    """Сериализатор корзины."""
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('user', 'recipe')
+
+
+class FavoriteSerializer(AbstractSerializer):
+    """Сериализатор избранного."""
+
+    class Meta:
+        model = Favorite
+        fields = ('user', 'recipe')

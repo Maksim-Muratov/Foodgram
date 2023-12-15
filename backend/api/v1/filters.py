@@ -36,20 +36,16 @@ class RecipeFilter(FilterSet):
 
     def filter_is_favorited(self, queryset, name, value):
         """Фильтр по избранному"""
-        if self.request.user.is_anonymous:
-            return queryset.none()
         if value:
             favorites = Favorite.objects.filter(
-                user=self.request.user).values_list('recipe_id', flat=True)
+                user=self.request.user.id).values_list('recipe_id', flat=True)
             return queryset.filter(id__in=favorites)
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         """Фильтр по корзине покупок"""
-        if self.request.user.is_anonymous:
-            return queryset.none()
         if value:
             shopping_carts = ShoppingCart.objects.filter(
-                user=self.request.user).values_list('recipe_id', flat=True)
+                user=self.request.user.id).values_list('recipe_id', flat=True)
             return queryset.filter(id__in=shopping_carts)
         return queryset

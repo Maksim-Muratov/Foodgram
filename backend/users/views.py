@@ -23,7 +23,9 @@ class CustomUserViewSet(UserViewSet):
 
     def get_permissions(self):
         """Устанавливаем права доступа для отдельных запросов."""
-        if self.action in ['me', 'subscribe', 'subscriptions']:
+        if self.action in [
+            'me', 'subscribe', 'delete_subscribe', 'subscriptions'
+        ]:
             permission_classes = [permissions.IsAuthenticated]
         else:
             permission_classes = [permissions.AllowAny]
@@ -32,8 +34,7 @@ class CustomUserViewSet(UserViewSet):
     @action(methods=['get'], detail=False)
     def subscriptions(self, request):
         """Подписки."""
-        user = request.user
-        subscriptions = User.objects.filter(author__user=user)
+        subscriptions = User.objects.filter(author__user=request.user)
         pages = self.paginate_queryset(subscriptions)
         serializer = SubscribeSerializer(
             pages, many=True, context={'request': request}
@@ -43,7 +44,6 @@ class CustomUserViewSet(UserViewSet):
     @action(methods=['post'], detail=True)
     def subscribe(self, request, **kwargs):
         """Подписаться."""
-        user = request.user
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
         serializer = SubscribeSerializer(
@@ -52,20 +52,13 @@ class CustomUserViewSet(UserViewSet):
             context={'request': request},
         )
         serializer.is_valid(raise_exception=True)
-        Subscribe.objects.create(user=user, author=author)
+        Subscribe.objects.create(user=request.user, author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
     def delete_subscribe(self, request, **kwargs):
         """Отписаться."""
-        user = request.user
-        if user.is_authenticated:
-            author_id = self.kwargs.get('id')
-            author = get_object_or_404(User, id=author_id)
-            try:
-                subscription = Subscribe.objects.get(user=user, author=author)
-            except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        author_id = self.kwargs.get('id')
+        author = get_object_or_404(User, id=author_id)
+        get_object_or_404(Subscribe, user=request.user, author=author).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -2,10 +2,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from .constants import (
-    EMAIL,
-    PASSWORD,
-    FIRST_NAME,
-    LAST_NAME
+    EMAIL_LEN,
+    PASSWORD_LEN,
+    FIRST_NAME_LEN,
+    LAST_NAME_LEN
 )
 
 
@@ -14,24 +14,24 @@ class User(AbstractUser):
 
     email = models.EmailField(
         'Email',
-        max_length=EMAIL,
+        max_length=EMAIL_LEN,
         unique=True,
-        help_text=f'Обязательное поле. Не более {EMAIL} символов.'
+        help_text=f'Обязательное поле. Не более {EMAIL_LEN} символов.'
     )
     password = models.CharField(
         'Пароль',
-        max_length=PASSWORD,
-        help_text=f'Обязательное поле. Не более {PASSWORD} символов.'
+        max_length=PASSWORD_LEN,
+        help_text=f'Обязательное поле. Не более {PASSWORD_LEN} символов.'
     )
     first_name = models.CharField(
         'Имя',
-        max_length=FIRST_NAME,
-        help_text=f'Обязательное поле. Не более {FIRST_NAME} символов.'
+        max_length=FIRST_NAME_LEN,
+        help_text=f'Обязательное поле. Не более {FIRST_NAME_LEN} символов.'
     )
     last_name = models.CharField(
         'Фамилия',
-        max_length=LAST_NAME,
-        help_text=f'Обязательное поле. Не более {LAST_NAME} символов.'
+        max_length=LAST_NAME_LEN,
+        help_text=f'Обязательное поле. Не более {LAST_NAME_LEN} символов.'
     )
 
     USERNAME_FIELD = 'email'

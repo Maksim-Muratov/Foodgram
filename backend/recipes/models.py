@@ -3,11 +3,11 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from .constants import (
-    INGREDIENT_NAME,
-    INGREDIENT_MEASUREMENT_UNIT,
-    TAG_NAME,
-    TAG_SLUG,
-    RECIPE_NAME,
+    INGREDIENT_NAME_LEN,
+    INGREDIENT_MEASUREMENT_UNIT_LEN,
+    TAG_NAME_LEN,
+    TAG_SLUG_LEN,
+    RECIPE_NAME_LEN,
     MIN_COOKING_TIME,
     MIN_AMOUNT
 )
@@ -23,11 +23,11 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         'Название',
-        max_length=INGREDIENT_NAME
+        max_length=INGREDIENT_NAME_LEN
     )
     measurement_unit = models.CharField(
         'Единица измерения',
-        max_length=INGREDIENT_MEASUREMENT_UNIT
+        max_length=INGREDIENT_MEASUREMENT_UNIT_LEN
     )
 
     class Meta:
@@ -50,12 +50,12 @@ class Tag(models.Model):
 
     name = models.CharField(
         'Название',
-        max_length=TAG_NAME,
+        max_length=TAG_NAME_LEN,
         unique=True
     )
     slug = models.SlugField(
         'Slug',
-        max_length=TAG_SLUG,
+        max_length=TAG_SLUG_LEN,
         unique=True
     )
     color = models.CharField(
@@ -90,9 +90,9 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название',
-        max_length=RECIPE_NAME,
+        max_length=RECIPE_NAME_LEN,
         db_index=True,
-        help_text=f'Обязательное поле. До {RECIPE_NAME} символов.'
+        help_text=f'Обязательное поле. До {RECIPE_NAME_LEN} символов.'
     )
     image = models.ImageField(
         'Изображение блюда',
