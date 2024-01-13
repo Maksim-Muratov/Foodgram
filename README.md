@@ -4,12 +4,6 @@
 
 **Foodgram** — сайт, на котором пользователи могут публиковать свои рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Пользователям сайта также доступен сервис «Список покупок». Он позволяет создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
 
-![workflow](https://github.com/Maksim-Muratov/foodgram-project-react/actions/workflows/main.yml/badge.svg)
-
-- **Проект доступен по ссылке:** https://muratov.serveblog.net/
-- **Логин админки:** admin@admin.ru
-- **Пароль админки:** admin
-
 ## Технологии
 
 Backend проекта написан на **Django**, Frontend - на React.
@@ -38,3 +32,5 @@ docker compose up
 
 ## Автор: Муратов Максим
 Backend Python Developer
+
+![workflow](https://github.com/Maksim-Muratov/foodgram-project-react/actions/workflows/main.yml/badge.svg)
